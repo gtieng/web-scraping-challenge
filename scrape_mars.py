@@ -70,8 +70,8 @@ def scrape():
     facts_url = 'https://space-facts.com/mars/'
 
     #scrape, format, and save table
-    facts_read = pd.read_html(facts_url)
-    facts_table = facts_read[0].to_html()
+    facts_read = pd.read_html(facts_url)[0]
+    facts_table = facts_read.to_html()
 
 
     # # 5. MARS HEMISPHERES
@@ -104,12 +104,15 @@ def scrape():
 
     #loop through individual pages and save url names
     hemi_images = []
-    for j in range(4):
-        d_url = "https://astrogeology.usgs.gov" + hemi_links[j]['href']
-        d_request = driver.get(d_url)
-        d_soup = BeautifulSoup(driver.page_source, features='lxml')
-        d_link = d_soup.find('a', text="Sample")
-        hemi_images.append(d_link['href'])
+
+    #loop through individual pages and save url names
+    for j in range(len(hemi_links)):
+        if j%2 ==1:      
+            d_url = "https://astrogeology.usgs.gov" + hemi_links[j]['href']
+            d_request = driver.get(d_url)
+            d_soup = BeautifulSoup(driver.page_source)
+            d_link = d_soup.find('a', text="Sample")
+            hemi_images.append(d_link['href'])
 
     #close browser
     driver.quit()
@@ -132,5 +135,4 @@ def scrape():
         "hemi_i": hemi_images
     }
 
-    # 7. RETURN
     return content
